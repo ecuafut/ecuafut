@@ -4,7 +4,6 @@ import { supabase, Noticia } from '../lib/supabase';
 
 export const revalidate = 60;
 
-// Actualizamos para recibir los parámetros de búsqueda de la URL
 interface PageProps {
   searchParams: Promise<{ cat?: string }>;
 }
@@ -15,7 +14,6 @@ async function obtenerNoticias(categoriaFiltro?: string): Promise<Noticia[]> {
     .select('*')
     .order('id', { ascending: false });
 
-  // Si el usuario hizo clic en una categoría, filtramos en Supabase
   if (categoriaFiltro) {
     query = query.ilike('categoria', `%${categoriaFiltro}%`);
   }
@@ -47,11 +45,9 @@ export default async function HomePage({ searchParams }: PageProps) {
 
   return (
     <div className="min-h-screen bg-[#FDFBF7] text-zinc-900 font-sans antialiased">
-      {/* Barra Superior con Logo más grande y centrado verticalmente */}
+      {/* Barra Superior */}
       <header className="border-b border-zinc-200/80 bg-white/95 backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          
-          {/* Logo con tamaño ajustado y más vistoso */}
           <Link href="/" className="flex items-center">
             <Image 
               src="/logo.png" 
@@ -63,7 +59,6 @@ export default async function HomePage({ searchParams }: PageProps) {
             />
           </Link>
 
-          {/* Menú Superior Completo y Funcional */}
           <nav className="hidden lg:flex items-center gap-5 text-xs font-bold uppercase tracking-wider text-zinc-600">
             <Link href="/" className={`hover:text-amber-600 transition ${!categoriaSeleccionada ? 'text-amber-600 border-b-2 border-amber-600 pb-1' : ''}`}>Todo</Link>
             <Link href="/?cat=LigaPro" className={`hover:text-amber-600 transition ${categoriaSeleccionada === 'LigaPro' ? 'text-amber-600 border-b-2 border-amber-600 pb-1' : ''}`}>LigaPro</Link>
@@ -137,8 +132,11 @@ export default async function HomePage({ searchParams }: PageProps) {
                     </p>
                   </div>
 
+                  {/* Autor enlazado al perfil y fecha */}
                   <div className="flex items-center justify-between text-[11px] text-zinc-500 pt-4 border-t border-zinc-100 font-semibold tracking-wide">
-                    <span>{nota.autor || 'Miguel Araujo'}</span>
+                    <Link href="/autor/miguel-araujo" className="hover:text-amber-600 transition">
+                      {nota.autor || 'Miguel Araujo'}
+                    </Link>
                     <time>{formatearFecha(nota.created_at)}</time>
                   </div>
                 </div>
@@ -148,8 +146,15 @@ export default async function HomePage({ searchParams }: PageProps) {
         )}
       </main>
 
-      <footer className="border-t border-zinc-200 bg-white mt-20 py-8 text-center text-xs text-zinc-500">
-        <p>© {new Date().getFullYear()} EcuaFut. Periodismo deportivo independiente.</p>
+      {/* Footer con enlaces a Contacto y Privacidad */}
+      <footer className="border-t border-zinc-200 bg-white mt-20 py-8">
+        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-zinc-500">
+          <p>© {new Date().getFullYear()} EcuaFut. Periodismo deportivo independiente.</p>
+          <div className="flex items-center gap-6 font-semibold">
+            <Link href="/contacto" className="hover:text-amber-600 transition">Contacto</Link>
+            <Link href="/privacidad" className="hover:text-amber-600 transition">Política de Privacidad</Link>
+          </div>
+        </div>
       </footer>
     </div>
   );
