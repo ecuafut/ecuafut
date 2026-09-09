@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { supabase, Noticia } from '../lib/supabase';
 
 export const revalidate = 60;
@@ -35,15 +36,24 @@ export default async function HomePage() {
       {/* Barra Superior */}
       <header className="border-b border-zinc-200/80 bg-white/95 backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+          
+          {/* Logo Oficial con Imagen */}
           <Link href="/" className="flex items-center gap-2">
-            <span className="text-2xl font-black tracking-tighter uppercase text-zinc-950">
-              ECUA<span className="text-amber-600">FUT</span>
-            </span>
+            <Image 
+              src="/logo.png" 
+              alt="EcuaFut Logo" 
+              width={140} 
+              height={40} 
+              priority 
+              className="h-10 w-auto object-contain"
+            />
           </Link>
+
+          {/* Menú Superior Funcional */}
           <nav className="flex items-center gap-6 text-xs md:text-sm font-bold uppercase tracking-wider text-zinc-600">
-            <span className="hover:text-zinc-950 cursor-pointer transition">LigaPro</span>
-            <span className="hover:text-zinc-950 cursor-pointer transition">Legionarios</span>
-            <span className="hover:text-zinc-950 cursor-pointer transition">Selección</span>
+            <Link href="/?categoria=LigaPro" className="hover:text-amber-600 transition">LigaPro</Link>
+            <Link href="/?categoria=Legionarios" className="hover:text-amber-600 transition">Legionarios</Link>
+            <Link href="/?categoria=Seleccion" className="hover:text-amber-600 transition">Selección</Link>
           </nav>
         </div>
       </header>
