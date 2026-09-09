@@ -21,6 +21,18 @@ function formatearFecha(fechaStr?: string): string {
   });
 }
 
+// Función inteligente para generar hashtags virales según la categoría de la noticia
+function obtenerHashtags(categoria?: string): string {
+  const cat = categoria?.toLowerCase() || '';
+  if (cat.includes('champions')) return '#ChampionsLeague #UCL #Futbol';
+  if (cat.includes('libertadores')) return '#CopaLibertadores #Conmebol';
+  if (cat.includes('sudamericana')) return '#CopaSudamericana';
+  if (cat.includes('ligapro')) return '#LigaPro #Ecuador #FutbolEcuatoriano';
+  if (cat.includes('seleccion')) return '#LaTri #Ecuador #Eliminatorias';
+  if (cat.includes('legionarios')) return '#Legionarios #LaTri #Futbolistas';
+  return '#EcuaFut #Futbol #Deportes';
+}
+
 async function obtenerNoticia(slug: string): Promise<Noticia | null> {
   const { data, error } = await supabase
     .from('noticias')
@@ -81,11 +93,13 @@ export default async function DetalleNoticiaPage({ params }: PageProps) {
   }
 
   const urlArticulo = `https://ecuafut.com/noticias/${nota.slug}`;
-  const textoCompartir = `${nota.titulo} vía @EcuaFutCom`;
+  
+  // Incluimos los hashtags virales automáticos según la categoría de la noticia
+  const hashtagsDinamicos = obtenerHashtags(nota.categoria);
+  const textoCompartir = `${nota.titulo} vía @EcuaFutCom\n\n${hashtagsDinamicos}`;
 
-  // Enlace para PC (x.com)
+  // Enlaces adaptados para PC y Móvil
   const enlaceXPC = `https://x.com/intent/post?text=${encodeURIComponent(textoCompartir)}&url=${encodeURIComponent(urlArticulo)}`;
-  // Enlace para Móvil (twitter.com abre la App nativa)
   const enlaceXMovil = `https://twitter.com/intent/tweet?text=${encodeURIComponent(textoCompartir)}&url=${encodeURIComponent(urlArticulo)}`;
   
   const enlaceWhatsApp = `https://api.whatsapp.com/send?text=${encodeURIComponent(`${nota.titulo} - ${urlArticulo}`)}`;
