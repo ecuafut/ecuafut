@@ -110,8 +110,8 @@ export default async function HomePage({ searchParams }: PageProps) {
                       alt={nota.titulo}
                       fill
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      priority={index < 3} // Priorizamos la carga de las primeras 3 imágenes superiores para mejorar el LCP
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 ease-out"
+                      priority={index < 3}
+                      className="object-cover group-hover:scale-105 transition-transform duration-300 ease-out"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center bg-amber-50 text-amber-800 font-bold text-xs uppercase tracking-widest">
