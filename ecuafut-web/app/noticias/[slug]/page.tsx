@@ -10,11 +10,11 @@ interface PageProps {
 
 export const revalidate = 60;
 
-// Muestra la fecha real del artículo en lugar de decir siempre Hoy
+// Función de fecha segura que nunca se queda en blanco
 function formatearFecha(fechaStr?: string): string {
-  if (!fechaStr) return '';
+  if (!fechaStr) return 'Actualidad';
   const fecha = new Date(fechaStr);
-  if (isNaN(fecha.getTime())) return '';
+  if (isNaN(fecha.getTime())) return 'Reciente';
   return fecha.toLocaleDateString('es-EC', {
     day: 'numeric',
     month: 'long',
@@ -83,9 +83,9 @@ export default async function DetalleNoticiaPage({ params }: PageProps) {
 
   const urlArticulo = `https://ecuafut.com/noticias/${nota.slug}`;
   
-  // Enlaces de compartir optimizados y blindados para PC y móviles
-  const textoTuit = `${nota.titulo} vía @EcuaFutCom`;
-  const enlaceX = `https://twitter.com/intent/tweet?text=${encodeURIComponent(textoTuit)}&url=${encodeURIComponent(urlArticulo)}`;
+  // Enlaces de compartir ultra limpios y compatibles con PC y móviles
+  const textoCompartir = `${nota.titulo} vía @EcuaFutCom`;
+  const enlaceX = `https://x.com/intent/post?text=${encodeURIComponent(textoCompartir)}&url=${encodeURIComponent(urlArticulo)}`;
   const enlaceWhatsApp = `https://api.whatsapp.com/send?text=${encodeURIComponent(`${nota.titulo} - ${urlArticulo}`)}`;
 
   const bloques = (nota.contenido || '')

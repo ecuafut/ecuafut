@@ -27,11 +27,11 @@ async function obtenerNoticias(categoriaFiltro?: string): Promise<Noticia[]> {
   return data || [];
 }
 
-// Muestra la fecha real del post (ej: 8 de sept) en lugar de decir siempre Hoy
+// Función de fecha robusta integrada para la portada
 function formatearFecha(fechaStr?: string): string {
-  if (!fechaStr) return '';
+  if (!fechaStr) return 'Reciente';
   const fecha = new Date(fechaStr);
-  if (isNaN(fecha.getTime())) return '';
+  if (isNaN(fecha.getTime())) return 'Reciente';
   return fecha.toLocaleDateString('es-EC', {
     day: 'numeric',
     month: 'short'
@@ -133,7 +133,7 @@ export default async function HomePage({ searchParams }: PageProps) {
                     </p>
                   </div>
 
-                  {/* Autor enlazado al perfil y fecha real */}
+                  {/* Autor enlazado al perfil y fecha corregida */}
                   <div className="flex items-center justify-between text-[11px] text-zinc-500 pt-4 border-t border-zinc-100 font-semibold tracking-wide">
                     <Link href="/autor/miguel-araujo" className="hover:text-amber-600 transition">
                       {nota.autor || 'Miguel Araujo'}
