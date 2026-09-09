@@ -81,9 +81,10 @@ export default async function DetalleNoticiaPage({ params }: PageProps) {
   }
 
   const urlArticulo = `https://ecuafut.com/noticias/${nota.slug}`;
-  const textoCompartir = encodeURIComponent(`${nota.titulo} vía @EcuaFutCom`);
-  const urlCompartirEncoded = encodeURIComponent(urlArticulo);
-  const enlaceX = `https://twitter.com/intent/tweet?text=${textoCompartir}&url=${urlCompartirEncoded}`;
+  // Corregimos la codificación para que Twitter (X) reciba el título y el enlace de manera impecable
+  const textoTuit = encodeURIComponent(`${nota.titulo} vía @EcuaFutCom`);
+  const enlaceX = `https://twitter.com/intent/tweet?text=${textoTuit}&url=${encodeURIComponent(urlArticulo)}`;
+  const enlaceWhatsApp = `https://api.whatsapp.com/send?text=${encodeURIComponent(`${nota.titulo} - ${urlArticulo}`)}`;
 
   const bloques = (nota.contenido || '')
     .split('\n')
@@ -126,29 +127,29 @@ export default async function DetalleNoticiaPage({ params }: PageProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaNoticia) }}
       />
 
-      {/* Barra Superior Unificada con el Home */}
+      {/* Barra Superior con scroll horizontal en móviles unificada con el Home */}
       <header className="border-b border-zinc-200/80 bg-white/95 backdrop-blur-md sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          <Link href="/" className="flex items-center">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 h-20 flex items-center justify-between gap-4">
+          <Link href="/" className="flex items-center shrink-0">
             <Image 
               src="/logo.png" 
               alt="EcuaFut Logo" 
               width={170} 
               height={55} 
               priority 
-              className="h-12 w-auto object-contain hover:opacity-95 transition"
+              className="h-10 md:h-12 w-auto object-contain hover:opacity-95 transition"
             />
           </Link>
 
-          <nav className="hidden lg:flex items-center gap-5 text-xs font-bold uppercase tracking-wider text-zinc-600">
-            <Link href="/" className="hover:text-amber-600 transition">Todo</Link>
-            <Link href="/?cat=LigaPro" className="hover:text-amber-600 transition">LigaPro</Link>
-            <Link href="/?cat=Sudamericana" className="hover:text-amber-600 transition">Sudamericana</Link>
-            <Link href="/?cat=Libertadores" className="hover:text-amber-600 transition">Libertadores</Link>
-            <Link href="/?cat=Champions" className="hover:text-amber-600 transition">Champions</Link>
-            <Link href="/?cat=Europa" className="hover:text-amber-600 transition">Europa League</Link>
-            <Link href="/?cat=Legionarios" className="hover:text-amber-600 transition">Legionarios</Link>
-            <Link href="/?cat=Seleccion" className="hover:text-amber-600 transition">Selección</Link>
+          <nav className="flex items-center gap-4 overflow-x-auto no-scrollbar py-2 text-xs font-bold uppercase tracking-wider text-zinc-600 whitespace-nowrap">
+            <Link href="/" className="hover:text-amber-600 transition shrink-0">Todo</Link>
+            <Link href="/?cat=LigaPro" className="hover:text-amber-600 transition shrink-0">LigaPro</Link>
+            <Link href="/?cat=Sudamericana" className="hover:text-amber-600 transition shrink-0">Sudamericana</Link>
+            <Link href="/?cat=Libertadores" className="hover:text-amber-600 transition shrink-0">Libertadores</Link>
+            <Link href="/?cat=Champions" className="hover:text-amber-600 transition shrink-0">Champions</Link>
+            <Link href="/?cat=Europa" className="hover:text-amber-600 transition shrink-0">Europa League</Link>
+            <Link href="/?cat=Legionarios" className="hover:text-amber-600 transition shrink-0">Legionarios</Link>
+            <Link href="/?cat=Seleccion" className="hover:text-amber-600 transition shrink-0">Selección</Link>
           </nav>
         </div>
       </header>
@@ -192,7 +193,7 @@ export default async function DetalleNoticiaPage({ params }: PageProps) {
           <div className="flex items-center gap-2">
             <span className="text-[11px] uppercase tracking-wider text-zinc-600 font-bold">Compartir:</span>
             <a
-              href={`https://api.whatsapp.com/send?text=${textoCompartir}%20${urlCompartirEncoded}`}
+              href={enlaceWhatsApp}
               target="_blank"
               rel="noopener noreferrer"
               className="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1 rounded-md text-[11px] font-bold transition"

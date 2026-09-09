@@ -45,29 +45,29 @@ export default async function HomePage({ searchParams }: PageProps) {
 
   return (
     <div className="min-h-screen bg-[#FDFBF7] text-zinc-900 font-sans antialiased">
-      {/* Barra Superior */}
+      {/* Barra Superior con scroll horizontal en móviles */}
       <header className="border-b border-zinc-200/80 bg-white/95 backdrop-blur-md sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          <Link href="/" className="flex items-center">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 h-20 flex items-center justify-between gap-4">
+          <Link href="/" className="flex items-center shrink-0">
             <Image 
               src="/logo.png" 
               alt="EcuaFut Logo" 
               width={170} 
               height={55} 
               priority 
-              className="h-12 w-auto object-contain hover:opacity-95 transition"
+              className="h-10 md:h-12 w-auto object-contain hover:opacity-95 transition"
             />
           </Link>
 
-          <nav className="hidden lg:flex items-center gap-5 text-xs font-bold uppercase tracking-wider text-zinc-600">
-            <Link href="/" className={`hover:text-amber-600 transition ${!categoriaSeleccionada ? 'text-amber-600 border-b-2 border-amber-600 pb-1' : ''}`}>Todo</Link>
-            <Link href="/?cat=LigaPro" className={`hover:text-amber-600 transition ${categoriaSeleccionada === 'LigaPro' ? 'text-amber-600 border-b-2 border-amber-600 pb-1' : ''}`}>LigaPro</Link>
-            <Link href="/?cat=Sudamericana" className={`hover:text-amber-600 transition ${categoriaSeleccionada === 'Sudamericana' ? 'text-amber-600 border-b-2 border-amber-600 pb-1' : ''}`}>Sudamericana</Link>
-            <Link href="/?cat=Libertadores" className={`hover:text-amber-600 transition ${categoriaSeleccionada === 'Libertadores' ? 'text-amber-600 border-b-2 border-amber-600 pb-1' : ''}`}>Libertadores</Link>
-            <Link href="/?cat=Champions" className={`hover:text-amber-600 transition ${categoriaSeleccionada === 'Champions' ? 'text-amber-600 border-b-2 border-amber-600 pb-1' : ''}`}>Champions</Link>
-            <Link href="/?cat=Europa" className={`hover:text-amber-600 transition ${categoriaSeleccionada === 'Europa' ? 'text-amber-600 border-b-2 border-amber-600 pb-1' : ''}`}>Europa League</Link>
-            <Link href="/?cat=Legionarios" className={`hover:text-amber-600 transition ${categoriaSeleccionada === 'Legionarios' ? 'text-amber-600 border-b-2 border-amber-600 pb-1' : ''}`}>Legionarios</Link>
-            <Link href="/?cat=Seleccion" className={`hover:text-amber-600 transition ${categoriaSeleccionada === 'Seleccion' ? 'text-amber-600 border-b-2 border-amber-600 pb-1' : ''}`}>Selección</Link>
+          <nav className="flex items-center gap-4 overflow-x-auto no-scrollbar py-2 text-xs font-bold uppercase tracking-wider text-zinc-600 whitespace-nowrap">
+            <Link href="/" className={`hover:text-amber-600 transition shrink-0 ${!categoriaSeleccionada ? 'text-amber-600 border-b-2 border-amber-600 pb-1' : ''}`}>Todo</Link>
+            <Link href="/?cat=LigaPro" className={`hover:text-amber-600 transition shrink-0 ${categoriaSeleccionada === 'LigaPro' ? 'text-amber-600 border-b-2 border-amber-600 pb-1' : ''}`}>LigaPro</Link>
+            <Link href="/?cat=Sudamericana" className={`hover:text-amber-600 transition shrink-0 ${categoriaSeleccionada === 'Sudamericana' ? 'text-amber-600 border-b-2 border-amber-600 pb-1' : ''}`}>Sudamericana</Link>
+            <Link href="/?cat=Libertadores" className={`hover:text-amber-600 transition shrink-0 ${categoriaSeleccionada === 'Libertadores' ? 'text-amber-600 border-b-2 border-amber-600 pb-1' : ''}`}>Libertadores</Link>
+            <Link href="/?cat=Champions" className={`hover:text-amber-600 transition shrink-0 ${categoriaSeleccionada === 'Champions' ? 'text-amber-600 border-b-2 border-amber-600 pb-1' : ''}`}>Champions</Link>
+            <Link href="/?cat=Europa" className={`hover:text-amber-600 transition shrink-0 ${categoriaSeleccionada === 'Europa' ? 'text-amber-600 border-b-2 border-amber-600 pb-1' : ''}`}>Europa League</Link>
+            <Link href="/?cat=Legionarios" className={`hover:text-amber-600 transition shrink-0 ${categoriaSeleccionada === 'Legionarios' ? 'text-amber-600 border-b-2 border-amber-600 pb-1' : ''}`}>Legionarios</Link>
+            <Link href="/?cat=Seleccion" className={`hover:text-amber-600 transition shrink-0 ${categoriaSeleccionada === 'Seleccion' ? 'text-amber-600 border-b-2 border-amber-600 pb-1' : ''}`}>Selección</Link>
           </nav>
         </div>
       </header>
