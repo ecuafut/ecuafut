@@ -4,12 +4,23 @@ import { supabase, Noticia } from '../lib/supabase';
 
 export const revalidate = 60;
 
-async function obtenerNoticias(): Promise<Noticia[]> {
-  const { data, error } = await supabase
+// Actualizamos para recibir los parámetros de búsqueda de la URL
+interface PageProps {
+  searchParams: Promise<{ cat?: string }>;
+}
+
+async function obtenerNoticias(categoriaFiltro?: string): Promise<Noticia[]> {
+  let query = supabase
     .from('noticias')
     .select('*')
-    .order('id', { ascending: false })
-    .limit(24);
+    .order('id', { ascending: false });
+
+  // Si el usuario hizo clic en una categoría, filtramos en Supabase
+  if (categoriaFiltro) {
+    query = query.ilike('categoria', `%${categoriaFiltro}%`);
+  }
+
+  const { data, error } = await query.limit(24);
 
   if (error) {
     console.error('Error al consultar Supabase:', error);
@@ -28,50 +39,66 @@ function formatearFecha(fechaStr?: string): string {
   });
 }
 
-export default async function HomePage() {
-  const noticias = await obtenerNoticias();
+export default async function HomePage({ searchParams }: PageProps) {
+  const resolvedParams = await searchParams;
+  const categoriaSeleccionada = resolvedParams?.cat;
+  
+  const noticias = await obtenerNoticias(categoriaSeleccionada);
 
   return (
     <div className="min-h-screen bg-[#FDFBF7] text-zinc-900 font-sans antialiased">
-      {/* Barra Superior */}
+      {/* Barra Superior con Logo más grande y centrado verticalmente */}
       <header className="border-b border-zinc-200/80 bg-white/95 backdrop-blur-md sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
           
-          {/* Logo Oficial con Imagen */}
-          <Link href="/" className="flex items-center gap-2">
+          {/* Logo con tamaño ajustado y más vistoso */}
+          <Link href="/" className="flex items-center">
             <Image 
               src="/logo.png" 
               alt="EcuaFut Logo" 
-              width={140} 
-              height={40} 
+              width={170} 
+              height={55} 
               priority 
-              className="h-10 w-auto object-contain"
+              className="h-12 w-auto object-contain hover:opacity-95 transition"
             />
           </Link>
 
-          {/* Menú Superior Funcional */}
-          <nav className="flex items-center gap-6 text-xs md:text-sm font-bold uppercase tracking-wider text-zinc-600">
-            <Link href="/?categoria=LigaPro" className="hover:text-amber-600 transition">LigaPro</Link>
-            <Link href="/?categoria=Legionarios" className="hover:text-amber-600 transition">Legionarios</Link>
-            <Link href="/?categoria=Seleccion" className="hover:text-amber-600 transition">Selección</Link>
+          {/* Menú Superior Completo y Funcional */}
+          <nav className="hidden lg:flex items-center gap-5 text-xs font-bold uppercase tracking-wider text-zinc-600">
+            <Link href="/" className={`hover:text-amber-600 transition ${!categoriaSeleccionada ? 'text-amber-600 border-b-2 border-amber-600 pb-1' : ''}`}>Todo</Link>
+            <Link href="/?cat=LigaPro" className={`hover:text-amber-600 transition ${categoriaSeleccionada === 'LigaPro' ? 'text-amber-600 border-b-2 border-amber-600 pb-1' : ''}`}>LigaPro</Link>
+            <Link href="/?cat=Sudamericana" className={`hover:text-amber-600 transition ${categoriaSeleccionada === 'Sudamericana' ? 'text-amber-600 border-b-2 border-amber-600 pb-1' : ''}`}>Sudamericana</Link>
+            <Link href="/?cat=Libertadores" className={`hover:text-amber-600 transition ${categoriaSeleccionada === 'Libertadores' ? 'text-amber-600 border-b-2 border-amber-600 pb-1' : ''}`}>Libertadores</Link>
+            <Link href="/?cat=Champions" className={`hover:text-amber-600 transition ${categoriaSeleccionada === 'Champions' ? 'text-amber-600 border-b-2 border-amber-600 pb-1' : ''}`}>Champions</Link>
+            <Link href="/?cat=Europa" className={`hover:text-amber-600 transition ${categoriaSeleccionada === 'Europa' ? 'text-amber-600 border-b-2 border-amber-600 pb-1' : ''}`}>Europa League</Link>
+            <Link href="/?cat=Legionarios" className={`hover:text-amber-600 transition ${categoriaSeleccionada === 'Legionarios' ? 'text-amber-600 border-b-2 border-amber-600 pb-1' : ''}`}>Legionarios</Link>
+            <Link href="/?cat=Seleccion" className={`hover:text-amber-600 transition ${categoriaSeleccionada === 'Seleccion' ? 'text-amber-600 border-b-2 border-amber-600 pb-1' : ''}`}>Selección</Link>
           </nav>
         </div>
       </header>
 
       {/* Feed Principal */}
-      <main className="max-w-6xl mx-auto px-4 py-8">
-        <div className="mb-8 border-b border-zinc-200 pb-4">
-          <h1 className="text-2xl md:text-3xl font-black tracking-tight uppercase text-zinc-900">
-            Última Hora
-          </h1>
-          <p className="text-zinc-500 text-sm mt-1">
-            Fútbol ecuatoriano, legionarios y torneos internacionales.
-          </p>
+      <main className="max-w-7xl mx-auto px-6 py-8">
+        <div className="mb-8 border-b border-zinc-200 pb-4 flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl md:text-3xl font-black tracking-tight uppercase text-zinc-900">
+              {categoriaSeleccionada ? `Categoría: ${categoriaSeleccionada}` : 'Última Hora'}
+            </h1>
+            <p className="text-zinc-500 text-sm mt-1">
+              Fútbol ecuatoriano, legionarios y torneos internacionales en tiempo real.
+            </p>
+          </div>
+          {categoriaSeleccionada && (
+            <Link href="/" className="text-xs font-bold bg-zinc-200 hover:bg-zinc-300 text-zinc-800 px-3 py-1.5 rounded-lg transition">
+              Ver todo
+            </Link>
+          )}
         </div>
 
         {noticias.length === 0 ? (
-          <div className="text-center py-20">
-            <p className="text-zinc-500 font-medium">No hay noticias publicadas aún.</p>
+          <div className="text-center py-20 bg-white rounded-2xl border border-zinc-200">
+            <p className="text-zinc-500 font-medium">No hay noticias publicadas en esta categoría aún.</p>
+            <Link href="/" className="inline-block mt-4 text-xs font-bold text-amber-600 hover:underline">Volver al inicio</Link>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7">
@@ -80,7 +107,6 @@ export default async function HomePage() {
                 key={nota.id} 
                 className="group flex flex-col bg-white border border-zinc-200/80 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-200"
               >
-                {/* Portada 16:9 con contenedor seguro */}
                 <Link href={`/noticias/${nota.slug}`} className="block relative aspect-video w-full overflow-hidden bg-zinc-200">
                   {nota.imagen_url ? (
                     <img
@@ -95,11 +121,10 @@ export default async function HomePage() {
                     </div>
                   )}
                   <span className="absolute top-3 left-3 bg-zinc-950/85 backdrop-blur-sm text-white text-[10px] font-extrabold tracking-wider uppercase px-2.5 py-1 rounded-md shadow-sm">
-                    {nota.categoria || 'Legionarios'}
+                    {nota.categoria || 'Actualidad'}
                   </span>
                 </Link>
 
-                {/* Cuerpo del titular */}
                 <div className="p-5 flex flex-col flex-1 justify-between">
                   <div>
                     <Link href={`/noticias/${nota.slug}`}>
