@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
+import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { supabase, Noticia } from '../../../lib/supabase';
 
@@ -125,31 +126,50 @@ export default async function DetalleNoticiaPage({ params }: PageProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaNoticia) }}
       />
 
+      {/* Barra Superior Unificada con el Home */}
       <header className="border-b border-zinc-200/80 bg-white/95 backdrop-blur-md sticky top-0 z-50">
-        <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <span className="text-2xl font-black tracking-tighter uppercase text-zinc-950">
-              ECUA<span className="text-amber-600">FUT</span>
-            </span>
+        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+          <Link href="/" className="flex items-center">
+            <Image 
+              src="/logo.png" 
+              alt="EcuaFut Logo" 
+              width={170} 
+              height={55} 
+              priority 
+              className="h-12 w-auto object-contain hover:opacity-95 transition"
+            />
           </Link>
-          <Link
-            href="/"
-            className="text-xs font-bold uppercase tracking-wider text-zinc-600 hover:text-zinc-950 transition"
-          >
-            ← Volver a portada
-          </Link>
+
+          <nav className="hidden lg:flex items-center gap-5 text-xs font-bold uppercase tracking-wider text-zinc-600">
+            <Link href="/" className="hover:text-amber-600 transition">Todo</Link>
+            <Link href="/?cat=LigaPro" className="hover:text-amber-600 transition">LigaPro</Link>
+            <Link href="/?cat=Sudamericana" className="hover:text-amber-600 transition">Sudamericana</Link>
+            <Link href="/?cat=Libertadores" className="hover:text-amber-600 transition">Libertadores</Link>
+            <Link href="/?cat=Champions" className="hover:text-amber-600 transition">Champions</Link>
+            <Link href="/?cat=Europa" className="hover:text-amber-600 transition">Europa League</Link>
+            <Link href="/?cat=Legionarios" className="hover:text-amber-600 transition">Legionarios</Link>
+            <Link href="/?cat=Seleccion" className="hover:text-amber-600 transition">Selección</Link>
+          </nav>
         </div>
       </header>
 
       <main className="max-w-3xl mx-auto px-4 py-8 md:py-12">
-        <div className="flex items-center gap-3 mb-4">
-          <span className="bg-amber-100 text-amber-900 text-xs font-black tracking-wider uppercase px-3 py-1 rounded-md">
-            {nota.categoria || 'Actualidad'}
-          </span>
-          <span className="text-zinc-400 text-xs">•</span>
-          <time className="text-xs font-semibold text-zinc-500">
-            {formatearFecha(nota.created_at)}
-          </time>
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <span className="bg-amber-100 text-amber-900 text-xs font-black tracking-wider uppercase px-3 py-1 rounded-md">
+              {nota.categoria || 'Actualidad'}
+            </span>
+            <span className="text-zinc-400 text-xs">•</span>
+            <time className="text-xs font-semibold text-zinc-500">
+              {formatearFecha(nota.created_at)}
+            </time>
+          </div>
+          <Link
+            href="/"
+            className="text-xs font-bold uppercase tracking-wider text-zinc-600 hover:text-amber-600 transition"
+          >
+            ← Volver a portada
+          </Link>
         </div>
 
         <h1 className="text-2xl md:text-4xl font-black tracking-tight text-zinc-950 leading-tight md:leading-snug mb-4">
@@ -164,7 +184,7 @@ export default async function DetalleNoticiaPage({ params }: PageProps) {
 
         <div className="flex flex-wrap items-center justify-between gap-4 py-3 border-y border-zinc-200/80 mb-8 text-xs text-zinc-600 font-semibold">
           <div className="flex items-center gap-2">
-            <span>Por <strong className="text-zinc-900">{nota.autor || 'Miguel Araujo'}</strong></span>
+            <span>Por <Link href="/autor/miguel-araujo" className="text-zinc-900 hover:text-amber-600 underline transition"><strong>{nota.autor || 'Miguel Araujo'}</strong></Link></span>
             <span>•</span>
             <span>Edición Digital Ecuafut</span>
           </div>
@@ -230,8 +250,14 @@ export default async function DetalleNoticiaPage({ params }: PageProps) {
         </div>
       </main>
 
-      <footer className="border-t border-zinc-200 bg-white mt-20 py-8 text-center text-xs text-zinc-600">
-        <p>© {new Date().getFullYear()} EcuaFut. Todos los derechos reservados.</p>
+      <footer className="border-t border-zinc-200 bg-white mt-20 py-8">
+        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-zinc-500">
+          <p>© {new Date().getFullYear()} EcuaFut. Todos los derechos reservados.</p>
+          <div className="flex items-center gap-6 font-semibold">
+            <Link href="/contacto" className="hover:text-amber-600 transition">Contacto</Link>
+            <Link href="/privacidad" className="hover:text-amber-600 transition">Política de Privacidad</Link>
+          </div>
+        </div>
       </footer>
     </div>
   );
