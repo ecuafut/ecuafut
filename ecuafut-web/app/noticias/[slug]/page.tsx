@@ -10,7 +10,7 @@ interface PageProps {
 
 export const revalidate = 60;
 
-// Función de fecha segura que nunca se queda en blanco
+// Función de fecha segura
 function formatearFecha(fechaStr?: string): string {
   if (!fechaStr) return 'Actualidad';
   const fecha = new Date(fechaStr);
@@ -83,9 +83,9 @@ export default async function DetalleNoticiaPage({ params }: PageProps) {
 
   const urlArticulo = `https://ecuafut.com/noticias/${nota.slug}`;
   
-  // Enlaces de compartir ultra limpios y compatibles con PC y móviles
+  // Usamos el dominio universal clásico de Twitter (intent/tweet) para que abra la app en móvil y funcione en PC
   const textoCompartir = `${nota.titulo} vía @EcuaFutCom`;
-  const enlaceX = `https://x.com/intent/post?text=${encodeURIComponent(textoCompartir)}&url=${encodeURIComponent(urlArticulo)}`;
+  const enlaceX = `https://twitter.com/intent/tweet?text=${encodeURIComponent(textoCompartir)}&url=${encodeURIComponent(urlArticulo)}`;
   const enlaceWhatsApp = `https://api.whatsapp.com/send?text=${encodeURIComponent(`${nota.titulo} - ${urlArticulo}`)}`;
 
   const bloques = (nota.contenido || '')
