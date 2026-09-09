@@ -10,10 +10,11 @@ interface PageProps {
 
 export const revalidate = 60;
 
+// Muestra la fecha real del artículo en lugar de decir siempre Hoy
 function formatearFecha(fechaStr?: string): string {
-  if (!fechaStr) return 'Hoy';
+  if (!fechaStr) return '';
   const fecha = new Date(fechaStr);
-  if (isNaN(fecha.getTime())) return 'Hoy';
+  if (isNaN(fecha.getTime())) return '';
   return fecha.toLocaleDateString('es-EC', {
     day: 'numeric',
     month: 'long',
@@ -81,9 +82,10 @@ export default async function DetalleNoticiaPage({ params }: PageProps) {
   }
 
   const urlArticulo = `https://ecuafut.com/noticias/${nota.slug}`;
-  // Corregimos la codificación para que Twitter (X) reciba el título y el enlace de manera impecable
-  const textoTuit = encodeURIComponent(`${nota.titulo} vía @EcuaFutCom`);
-  const enlaceX = `https://twitter.com/intent/tweet?text=${textoTuit}&url=${encodeURIComponent(urlArticulo)}`;
+  
+  // Enlaces de compartir optimizados y blindados para PC y móviles
+  const textoTuit = `${nota.titulo} vía @EcuaFutCom`;
+  const enlaceX = `https://twitter.com/intent/tweet?text=${encodeURIComponent(textoTuit)}&url=${encodeURIComponent(urlArticulo)}`;
   const enlaceWhatsApp = `https://api.whatsapp.com/send?text=${encodeURIComponent(`${nota.titulo} - ${urlArticulo}`)}`;
 
   const bloques = (nota.contenido || '')
@@ -127,7 +129,7 @@ export default async function DetalleNoticiaPage({ params }: PageProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaNoticia) }}
       />
 
-      {/* Barra Superior con scroll horizontal en móviles unificada con el Home */}
+      {/* Barra Superior con scroll horizontal en móviles */}
       <header className="border-b border-zinc-200/80 bg-white/95 backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 md:px-6 h-20 flex items-center justify-between gap-4">
           <Link href="/" className="flex items-center shrink-0">

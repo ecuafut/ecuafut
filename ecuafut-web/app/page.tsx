@@ -27,10 +27,11 @@ async function obtenerNoticias(categoriaFiltro?: string): Promise<Noticia[]> {
   return data || [];
 }
 
+// Muestra la fecha real del post (ej: 8 de sept) en lugar de decir siempre Hoy
 function formatearFecha(fechaStr?: string): string {
-  if (!fechaStr) return 'Hoy';
+  if (!fechaStr) return '';
   const fecha = new Date(fechaStr);
-  if (isNaN(fecha.getTime())) return 'Hoy';
+  if (isNaN(fecha.getTime())) return '';
   return fecha.toLocaleDateString('es-EC', {
     day: 'numeric',
     month: 'short'
@@ -132,7 +133,7 @@ export default async function HomePage({ searchParams }: PageProps) {
                     </p>
                   </div>
 
-                  {/* Autor enlazado al perfil y fecha */}
+                  {/* Autor enlazado al perfil y fecha real */}
                   <div className="flex items-center justify-between text-[11px] text-zinc-500 pt-4 border-t border-zinc-100 font-semibold tracking-wide">
                     <Link href="/autor/miguel-araujo" className="hover:text-amber-600 transition">
                       {nota.autor || 'Miguel Araujo'}
