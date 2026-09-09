@@ -10,7 +10,6 @@ interface PageProps {
 
 export const revalidate = 60;
 
-// Función de fecha segura
 function formatearFecha(fechaStr?: string): string {
   if (!fechaStr) return 'Actualidad';
   const fecha = new Date(fechaStr);
@@ -82,10 +81,13 @@ export default async function DetalleNoticiaPage({ params }: PageProps) {
   }
 
   const urlArticulo = `https://ecuafut.com/noticias/${nota.slug}`;
-  
-  // Usamos el dominio universal clásico de Twitter (intent/tweet) para que abra la app en móvil y funcione en PC
   const textoCompartir = `${nota.titulo} vía @EcuaFutCom`;
-  const enlaceX = `https://twitter.com/intent/tweet?text=${encodeURIComponent(textoCompartir)}&url=${encodeURIComponent(urlArticulo)}`;
+
+  // Enlace para PC (x.com)
+  const enlaceXPC = `https://x.com/intent/post?text=${encodeURIComponent(textoCompartir)}&url=${encodeURIComponent(urlArticulo)}`;
+  // Enlace para Móvil (twitter.com abre la App nativa)
+  const enlaceXMovil = `https://twitter.com/intent/tweet?text=${encodeURIComponent(textoCompartir)}&url=${encodeURIComponent(urlArticulo)}`;
+  
   const enlaceWhatsApp = `https://api.whatsapp.com/send?text=${encodeURIComponent(`${nota.titulo} - ${urlArticulo}`)}`;
 
   const bloques = (nota.contenido || '')
@@ -202,11 +204,22 @@ export default async function DetalleNoticiaPage({ params }: PageProps) {
             >
               WhatsApp
             </a>
+
+            {/* Botón X para PC */}
             <a
-              href={enlaceX}
+              href={enlaceXPC}
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-zinc-900 hover:bg-zinc-800 text-white px-3 py-1 rounded-md text-[11px] font-bold transition"
+              className="hidden sm:inline-flex bg-zinc-900 hover:bg-zinc-800 text-white px-3 py-1 rounded-md text-[11px] font-bold transition items-center justify-center"
+            >
+              X
+            </a>
+            {/* Botón X para Móvil */}
+            <a
+              href={enlaceXMovil}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="sm:hidden inline-flex bg-zinc-900 hover:bg-zinc-800 text-white px-3 py-1 rounded-md text-[11px] font-bold transition items-center justify-center"
             >
               X
             </a>
@@ -239,14 +252,26 @@ export default async function DetalleNoticiaPage({ params }: PageProps) {
           })}
         </div>
 
+        {/* Caja final de comentarios adaptada para PC y Móvil */}
         <div className="mt-12 p-6 bg-zinc-100 rounded-2xl border border-zinc-200 text-center">
           <p className="text-sm font-bold text-zinc-900 mb-1">¿Qué opinas de este partido?</p>
           <p className="text-xs text-zinc-600 mb-4">Súmate a la conversación con nuestra comunidad en @EcuaFutCom.</p>
+          
+          {/* Botón grande para PC */}
           <a
-            href={enlaceX}
+            href={enlaceXPC}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-block bg-zinc-950 text-white text-xs font-bold px-5 py-2.5 rounded-xl hover:bg-zinc-800 transition"
+            className="hidden sm:inline-block bg-zinc-950 text-white text-xs font-bold px-5 py-2.5 rounded-xl hover:bg-zinc-800 transition"
+          >
+            Comentar en X (Twitter)
+          </a>
+          {/* Botón grande para Móvil */}
+          <a
+            href={enlaceXMovil}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="sm:hidden inline-block bg-zinc-950 text-white text-xs font-bold px-5 py-2.5 rounded-xl hover:bg-zinc-800 transition"
           >
             Comentar en X (Twitter)
           </a>
