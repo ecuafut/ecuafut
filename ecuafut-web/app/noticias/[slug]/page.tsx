@@ -132,8 +132,8 @@ export default async function DetalleNoticiaPage({ params }: PageProps) {
     headline: nota.titulo,
     description: nota.meta_descripcion || nota.contenido?.slice(0, 155),
     image: [nota.imagen_url],
-    datePublished: nota.created_at,
-    dateModified: nota.created_at,
+    datePublished: nota.fecha,
+    dateModified: nota.fecha,
     author: [
       {
         '@type': 'Person',
@@ -196,8 +196,9 @@ export default async function DetalleNoticiaPage({ params }: PageProps) {
               {nota.categoria || 'Actualidad'}
             </span>
             <span className="text-zinc-400 text-xs">•</span>
+            {/* Conectado a nota.fecha */}
             <time className="text-xs font-semibold text-zinc-500">
-              {formatearFecha(nota.created_at)}
+              {formatearFecha(nota.fecha)}
             </time>
           </div>
           <Link
@@ -257,7 +258,7 @@ export default async function DetalleNoticiaPage({ params }: PageProps) {
           </div>
         </div>
 
-        {/* IMAGEN OPTIMIZADA CON NEXT/IMAGE (Igual que en portada para máxima velocidad) */}
+        {/* IMAGEN OPTIMIZADA CON NEXT/IMAGE */}
         {nota.imagen_url && (
           <figure className="mb-8 rounded-2xl overflow-hidden border border-zinc-200/80 shadow-sm bg-zinc-100">
             <div className="relative w-full aspect-video">
@@ -317,8 +318,9 @@ export default async function DetalleNoticiaPage({ params }: PageProps) {
                     <h4 className="text-xs md:text-sm font-bold text-zinc-900 group-hover:text-amber-600 transition line-clamp-2">
                       {rel.titulo}
                     </h4>
+                    {/* Conectado a rel.fecha en lugar de created_at */}
                     <span className="text-[10px] font-semibold text-zinc-400 mt-2">
-                      {formatearFecha(rel.created_at)}
+                      {formatearFecha(rel.fecha)}
                     </span>
                   </div>
                 </Link>

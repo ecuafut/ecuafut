@@ -135,12 +135,12 @@ export default async function HomePage({ searchParams }: PageProps) {
                     </p>
                   </div>
 
-                  {/* Autor enlazado al perfil y fecha dinámica corregida */}
+                  {/* Autor enlazado al perfil y fecha corregida apuntando a nota.fecha */}
                   <div className="flex items-center justify-between text-[11px] text-zinc-500 pt-4 border-t border-zinc-100 font-semibold tracking-wide">
                     <Link href="/autor/miguel-araujo" className="hover:text-amber-600 transition">
                       {nota.autor || 'Miguel Araujo'}
                     </Link>
-                    <time>{formatearFecha(nota.created_at)}</time>
+                    <time>{formatearFecha(nota.fecha)}</time>
                   </div>
                 </div>
               </article>
