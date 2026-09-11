@@ -135,7 +135,7 @@ export default async function HomePage({ searchParams }: PageProps) {
                     </p>
                   </div>
 
-                  {/* Autor enlazado al perfil y fecha corregida */}
+                  {/* Autor enlazado al perfil y fecha dinámica corregida */}
                   <div className="flex items-center justify-between text-[11px] text-zinc-500 pt-4 border-t border-zinc-100 font-semibold tracking-wide">
                     <Link href="/autor/miguel-araujo" className="hover:text-amber-600 transition">
                       {nota.autor || 'Miguel Araujo'}

@@ -44,6 +44,22 @@ async function obtenerNoticia(slug: string): Promise<Noticia | null> {
   return data;
 }
 
+// Función para obtener noticias relacionadas de la misma categoría
+async function obtenerRelacionadas(categoria?: string, slugActual?: string): Promise<Noticia[]> {
+  if (!categoria) return [];
+  
+  const { data, error } = await supabase
+    .from('noticias')
+    .select('*')
+    .ilike('categoria', `%${categoria}%`)
+    .neq('slug', slugActual)
+    .order('id', { ascending: false })
+    .limit(3);
+
+  if (error) return [];
+  return data || [];
+}
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const nota = await obtenerNoticia(slug);
@@ -92,13 +108,14 @@ export default async function DetalleNoticiaPage({ params }: PageProps) {
     notFound();
   }
 
+  // Obtenemos noticias relacionadas en paralelo o secuencia
+  const noticiasRelacionadas = await obtenerRelacionadas(nota.categoria, nota.slug);
+
   const urlArticulo = `https://ecuafut.com/noticias/${nota.slug}`;
   
-  // Incluimos los hashtags virales automáticos según la categoría de la noticia
   const hashtagsDinamicos = obtenerHashtags(nota.categoria);
   const textoCompartir = `${nota.titulo} vía @EcuaFutCom\n\n${hashtagsDinamicos}`;
 
-  // Enlaces adaptados para PC y Móvil
   const enlaceXPC = `https://x.com/intent/post?text=${encodeURIComponent(textoCompartir)}&url=${encodeURIComponent(urlArticulo)}`;
   const enlaceXMovil = `https://twitter.com/intent/tweet?text=${encodeURIComponent(textoCompartir)}&url=${encodeURIComponent(urlArticulo)}`;
   
@@ -145,7 +162,7 @@ export default async function DetalleNoticiaPage({ params }: PageProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaNoticia) }}
       />
 
-      {/* Barra Superior con scroll horizontal en móviles */}
+      {/* Barra Superior */}
       <header className="border-b border-zinc-200/80 bg-white/95 backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 md:px-6 h-20 flex items-center justify-between gap-4">
           <Link href="/" className="flex items-center shrink-0">
@@ -240,13 +257,19 @@ export default async function DetalleNoticiaPage({ params }: PageProps) {
           </div>
         </div>
 
+        {/* IMAGEN OPTIMIZADA CON NEXT/IMAGE (Igual que en portada para máxima velocidad) */}
         {nota.imagen_url && (
           <figure className="mb-8 rounded-2xl overflow-hidden border border-zinc-200/80 shadow-sm bg-zinc-100">
-            <img
-              src={nota.imagen_url}
-              alt={nota.titulo}
-              className="w-full aspect-video object-cover"
-            />
+            <div className="relative w-full aspect-video">
+              <Image
+                src={nota.imagen_url}
+                alt={nota.titulo}
+                fill
+                priority
+                sizes="(max-width: 768px) 100vw, 768px"
+                className="object-cover"
+              />
+            </div>
             <figcaption className="p-3 text-[11px] text-zinc-600 text-center font-medium bg-white/70">
               Viñeta editorial original creada para Ecuafut
             </figcaption>
@@ -266,12 +289,49 @@ export default async function DetalleNoticiaPage({ params }: PageProps) {
           })}
         </div>
 
+        {/* SECCIÓN DE NOTICIAS RELACIONADAS */}
+        {noticiasRelacionadas.length > 0 && (
+          <section className="mt-16 pt-8 border-t border-zinc-200">
+            <h3 className="text-lg md:text-xl font-black uppercase tracking-tight text-zinc-900 mb-6">
+              Más de {nota.categoria}
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              {noticiasRelacionadas.map((rel) => (
+                <Link
+                  key={rel.id}
+                  href={`/noticias/${rel.slug}`}
+                  className="group flex flex-col bg-white border border-zinc-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition"
+                >
+                  <div className="relative aspect-video w-full bg-zinc-100">
+                    {rel.imagen_url && (
+                      <Image
+                        src={rel.imagen_url}
+                        alt={rel.titulo}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 33vw"
+                        className="object-cover group-hover:scale-105 transition duration-300"
+                      />
+                    )}
+                  </div>
+                  <div className="p-3 flex flex-col justify-between flex-1">
+                    <h4 className="text-xs md:text-sm font-bold text-zinc-900 group-hover:text-amber-600 transition line-clamp-2">
+                      {rel.titulo}
+                    </h4>
+                    <span className="text-[10px] font-semibold text-zinc-400 mt-2">
+                      {formatearFecha(rel.created_at)}
+                    </span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
+
         {/* Caja final de comentarios adaptada para PC y Móvil */}
         <div className="mt-12 p-6 bg-zinc-100 rounded-2xl border border-zinc-200 text-center">
           <p className="text-sm font-bold text-zinc-900 mb-1">¿Qué opinas de este partido?</p>
           <p className="text-xs text-zinc-600 mb-4">Súmate a la conversación con nuestra comunidad en @EcuaFutCom.</p>
           
-          {/* Botón grande para PC */}
           <a
             href={enlaceXPC}
             target="_blank"
@@ -280,7 +340,6 @@ export default async function DetalleNoticiaPage({ params }: PageProps) {
           >
             Comentar en X (Twitter)
           </a>
-          {/* Botón grande para Móvil */}
           <a
             href={enlaceXMovil}
             target="_blank"
