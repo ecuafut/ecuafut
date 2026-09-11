@@ -10,6 +10,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 export interface Noticia {
   id: number;
   created_at: string;
+  fecha?: string; // <--- Añadido para solucionar el error en Vercel
   titulo: string;
   slug: string;
   contenido: string;
