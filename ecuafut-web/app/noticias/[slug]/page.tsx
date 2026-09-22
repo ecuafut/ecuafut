@@ -21,7 +21,7 @@ function formatearFecha(fechaStr?: string): string {
   });
 }
 
-// Función inteligente para generar hashtags virales según la categoría de la noticia
+// Respaldo de hashtags en caso de noticias antiguas sin tweet_copy generado por IA
 function obtenerHashtags(categoria?: string): string {
   const cat = categoria?.toLowerCase() || '';
   if (cat.includes('champions')) return '#ChampionsLeague #UCL #Futbol';
@@ -29,8 +29,8 @@ function obtenerHashtags(categoria?: string): string {
   if (cat.includes('sudamericana')) return '#CopaSudamericana';
   if (cat.includes('ligapro')) return '#LigaPro #Ecuador #FutbolEcuatoriano';
   if (cat.includes('seleccion')) return '#LaTri #Ecuador #Eliminatorias';
-  if (cat.includes('legionarios')) return '#Legionarios #LaTri #Futbolistas';
-  return '#EcuaFut #Futbol #Deportes';
+  if (cat.includes('legionarios')) return '#Legionarios #EcuatorianosEnElExterior';
+  return '#EcuaFut #Futbol #Ecuador';
 }
 
 async function obtenerNoticia(slug: string): Promise<Noticia | null> {
@@ -113,13 +113,18 @@ export default async function DetalleNoticiaPage({ params }: PageProps) {
 
   const urlArticulo = `https://ecuafut.com/noticias/${nota.slug}`;
   
-  const hashtagsDinamicos = obtenerHashtags(nota.categoria);
-  const textoCompartir = `${nota.titulo} vía @EcuaFutCom\n\n${hashtagsDinamicos}`;
+  // LECTURA DINÁMICA DE LA IA: Si existe tweet_copy en Supabase, usa el copy viral y sus hashtags
+  const tweetCopyIA = ((nota as Record<string, any>).tweet_copy as string | undefined)?.trim();
+  const hashtagsRespaldo = obtenerHashtags(nota.categoria);
+
+  const textoCompartir = tweetCopyIA
+    ? (tweetCopyIA.includes('@EcuaFutCom') ? tweetCopyIA : `${tweetCopyIA} vía @EcuaFutCom`)
+    : `${nota.titulo} vía @EcuaFutCom\n\n${hashtagsRespaldo}`;
 
   const enlaceXPC = `https://x.com/intent/post?text=${encodeURIComponent(textoCompartir)}&url=${encodeURIComponent(urlArticulo)}`;
   const enlaceXMovil = `https://twitter.com/intent/tweet?text=${encodeURIComponent(textoCompartir)}&url=${encodeURIComponent(urlArticulo)}`;
   
-  const enlaceWhatsApp = `https://api.whatsapp.com/send?text=${encodeURIComponent(`${nota.titulo} - ${urlArticulo}`)}`;
+  const enlaceWhatsApp = `https://api.whatsapp.com/send?text=${encodeURIComponent(`${nota.titulo} -${urlArticulo}`)}`;
 
   const bloques = (nota.contenido || '')
     .split('\n')
@@ -196,7 +201,6 @@ export default async function DetalleNoticiaPage({ params }: PageProps) {
               {nota.categoria || 'Actualidad'}
             </span>
             <span className="text-zinc-400 text-xs">•</span>
-            {/* Conectado a nota.fecha */}
             <time className="text-xs font-semibold text-zinc-500">
               {formatearFecha(nota.fecha)}
             </time>
@@ -318,7 +322,6 @@ export default async function DetalleNoticiaPage({ params }: PageProps) {
                     <h4 className="text-xs md:text-sm font-bold text-zinc-900 group-hover:text-amber-600 transition line-clamp-2">
                       {rel.titulo}
                     </h4>
-                    {/* Conectado a rel.fecha en lugar de created_at */}
                     <span className="text-[10px] font-semibold text-zinc-400 mt-2">
                       {formatearFecha(rel.fecha)}
                     </span>
