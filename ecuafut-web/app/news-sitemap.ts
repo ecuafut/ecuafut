@@ -1,4 +1,3 @@
-// Ruta: app/news-sitemap.xml/route.ts
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
@@ -8,11 +7,8 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
 
 export async function GET() {
   const baseUrl = 'https://www.ecuafut.com'
-
-  // Calculamos la fecha de hace 48 horas exactas para cumplir la regla de Google News
   const hace48Horas = new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString()
 
-  // Consultamos solo los artículos recientes (últimas 48 horas)
   const { data: noticias } = await supabase
     .from('noticias')
     .select('titulo, slug, created_at')
@@ -24,7 +20,6 @@ export async function GET() {
   if (noticias) {
     noticias.forEach((noticia) => {
       const fechaPub = noticia.created_at ? new Date(noticia.created_at).toISOString() : new Date().toISOString()
-      // Limpiamos un poco el título para XML si contiene caracteres especiales
       const tituloSeguro = (noticia.titulo || 'Noticia Ecuafut').replace(/[&<>'"]/g, (tag) => {
         const chars: { [key: string]: string } = { '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&apos;', '"': '&quot;' };
         return chars[tag] || tag;

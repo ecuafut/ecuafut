@@ -18,8 +18,8 @@ Disallow: /admin/
 Disallow: /private/
 Disallow: /api/
 
-# Enlace al Sitemap principal del sitio web
+# Enlace al Sitemap principal del sitio web (Next.js lo genera automáticamente como sitemap.xml)
 Sitemap: https://www.ecuafut.com/sitemap.xml
 
-# Enlace al Sitemap especializado para Google News (lo crearemos a continuación)
-Sitemap: https://www.ecuafut.com/news-sitemap.xml
+# Enlace al Sitemap especializado para Google News
+Sitemap: https://www.ecuafut.com/news-sitemap
