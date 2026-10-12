@@ -8,12 +8,11 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
 export async function GET() {
   const baseUrl = 'https://www.ecuafut.com'
   
-  // Consultamos las noticias incluyendo la columna 'imagen_url'
   const { data: noticias } = await supabase
     .from('noticias')
     .select('titulo, slug, fecha, imagen_url')
     .order('id', { ascending: false })
-    .limit(50) // Traemos las últimas 50 noticias para asegurar que aparezcan en las pruebas
+    .limit(50)
 
   const xmlItems: string[] = []
 
@@ -26,7 +25,6 @@ export async function GET() {
         return chars[tag] || tag;
       });
 
-      // Bloque para incluir la imagen en el sitemap de noticias (Google News / Discover / Images)
       const imagenTag = noticia.imagen_url ? `
         <image:image>
           <image:loc>${noticia.imagen_url}</image:loc>
