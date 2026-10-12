@@ -8,10 +8,10 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://www.ecuafut.com'
 
-  // Consultamos las noticias usando la columna correcta 'fecha'
+  // Consultamos las noticias incluyendo la columna 'imagen_url'
   const { data: noticias } = await supabase
     .from('noticias')
-    .select('slug, fecha')
+    .select('slug, fecha, imagen_url')
     .order('id', { ascending: false })
     .limit(1000)
 
@@ -20,6 +20,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: noticia.fecha ? new Date(noticia.fecha) : new Date(),
     changeFrequency: 'weekly' as const,
     priority: 0.8,
+    // Agregamos las imágenes de forma nativa para Next.js
+    images: noticia.imagen_url ? [noticia.imagen_url] : [],
   })) : []
 
   return [

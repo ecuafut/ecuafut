@@ -8,10 +8,10 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
 export async function GET() {
   const baseUrl = 'https://www.ecuafut.com'
   
-  // Consultamos las noticias ordenadas por id o fecha usando la columna correcta 'fecha'
+  // Consultamos las noticias incluyendo la columna 'imagen_url'
   const { data: noticias } = await supabase
     .from('noticias')
-    .select('titulo, slug, fecha')
+    .select('titulo, slug, fecha, imagen_url')
     .order('id', { ascending: false })
     .limit(50) // Traemos las últimas 50 noticias para asegurar que aparezcan en las pruebas
 
@@ -26,9 +26,18 @@ export async function GET() {
         return chars[tag] || tag;
       });
 
+      // Bloque para incluir la imagen en el sitemap de noticias (Google News / Discover / Images)
+      const imagenTag = noticia.imagen_url ? `
+        <image:image>
+          <image:loc>${noticia.imagen_url}</image:loc>
+          <image:title>${tituloSeguro}</image:title>
+        </image:image>
+      ` : ''
+
       xmlItems.push(`
         <url>
           <loc>${baseUrl}/noticia/${noticia.slug}</loc>
+          ${imagenTag}
           <news:news>
             <news:publication>
               <news:name>Ecuafut IA</news:name>
@@ -44,7 +53,8 @@ export async function GET() {
 
   const newsSitemap = `<?xml version="1.0" encoding="UTF-8"?>
     <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-            xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
+            xmlns:news="http://www.google.com/schemas/sitemap-news/0.9"
+            xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
       ${xmlItems.join('')}
     </urlset>
   `
