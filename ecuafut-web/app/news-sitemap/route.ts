@@ -7,21 +7,20 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
 
 export async function GET() {
   const baseUrl = 'https://www.ecuafut.com'
-  const hace48Horas = new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString()
-
+  
+  // Consultamos las noticias ordenadas por id o fecha usando la columna correcta 'fecha'
   const { data: noticias } = await supabase
     .from('noticias')
-    .select('titulo, slug, created_at')
-    .gte('created_at', hace48Horas)
+    .select('titulo, slug, fecha')
     .order('id', { ascending: false })
+    .limit(50) // Traemos las últimas 50 noticias para asegurar que aparezcan en las pruebas
 
   const xmlItems: string[] = []
 
   if (noticias) {
     noticias.forEach((noticia) => {
-      const fechaPub = noticia.created_at ? new Date(noticia.created_at).toISOString() : new Date().toISOString()
+      const fechaPub = noticia.fecha ? new Date(noticia.fecha).toISOString() : new Date().toISOString()
       
-      // Corrección de TypeScript para el parámetro tag tipado como string
       const tituloSeguro = (noticia.titulo || 'Noticia Ecuafut').replace(/[&<>'"]/g, (tag: string) => {
         const chars: { [key: string]: string } = { '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&apos;', '"': '&quot;' };
         return chars[tag] || tag;

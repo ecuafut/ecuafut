@@ -8,16 +8,16 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://www.ecuafut.com'
 
-  // Consultamos las noticias publicadas en Supabase
+  // Consultamos las noticias usando la columna correcta 'fecha'
   const { data: noticias } = await supabase
     .from('noticias')
-    .select('slug, created_at')
+    .select('slug, fecha')
     .order('id', { ascending: false })
     .limit(1000)
 
   const posts = noticias ? noticias.map((noticia) => ({
     url: `${baseUrl}/noticia/${noticia.slug}`,
-    lastModified: noticia.created_at ? new Date(noticia.created_at) : new Date(),
+    lastModified: noticia.fecha ? new Date(noticia.fecha) : new Date(),
     changeFrequency: 'weekly' as const,
     priority: 0.8,
   })) : []
