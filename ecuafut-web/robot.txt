@@ -1,0 +1,25 @@
+# robots.txt para Ecuafut IA (https://www.ecuafut.com)
+
+User-agent: *
+Allow: /
+
+# Permitir explícitamente a los bots de Google de noticias e imágenes
+User-agent: Googlebot
+Allow: /
+
+User-agent: Googlebot-News
+Allow: /
+
+User-agent: Googlebot-Image
+Allow: /
+
+# Bloquear carpetas o rutas administrativas si las hubiera en el futuro
+Disallow: /admin/
+Disallow: /private/
+Disallow: /api/
+
+# Enlace al Sitemap principal del sitio web
+Sitemap: https://www.ecuafut.com/sitemap.xml
+
+# Enlace al Sitemap especializado para Google News (lo crearemos a continuación)
+Sitemap: https://www.ecuafut.com/news-sitemap.xml
