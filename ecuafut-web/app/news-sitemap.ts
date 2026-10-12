@@ -20,7 +20,9 @@ export async function GET() {
   if (noticias) {
     noticias.forEach((noticia) => {
       const fechaPub = noticia.created_at ? new Date(noticia.created_at).toISOString() : new Date().toISOString()
-      const tituloSeguro = (noticia.titulo || 'Noticia Ecuafut').replace(/[&<>'"]/g, (tag) => {
+      
+      // Corrección de TypeScript para el parámetro tag tipado como string
+      const tituloSeguro = (noticia.titulo || 'Noticia Ecuafut').replace(/[&<>'"]/g, (tag: string) => {
         const chars: { [key: string]: string } = { '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&apos;', '"': '&quot;' };
         return chars[tag] || tag;
       });
